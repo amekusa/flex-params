@@ -1,5 +1,5 @@
 {
-  "name": "parse-args",
+  "name": "flex-params",
   "version": "1.0.0",
   "description": "Smartly implement flexible function parameters",
   "main": "index.js",
@@ -7,7 +7,7 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "https://github.com/amekusa/parse-args"
+    "url": "https://github.com/amekusa/flex-params.git"
   },
   "keywords": [
     "utility",

@@ -1,5 +1,5 @@
 /*!
- * parse-args <https://github.com/amekusa/parse-args>
+ * flex-params <https://github.com/amekusa/flex-params>
  *
  * (c) 2020, Satoshi Soma (amekusa.com)
  * Released under the ISC License

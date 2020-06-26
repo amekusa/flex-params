@@ -1,5 +1,5 @@
-**parse-args** is a tiny but powerful utility for writing functions that have flexible parameters.
-Because parse-args is just a single function and has no dependency, you can use it for any kind of projects with no problem.
+**flex-params** is a tiny but powerful utility for writing functions that have flexible parameters.
+Because flex-params is just a single function and has no dependency, you can use it for any kind of projects with no problem.
 
 - [Getting Started](#getting-started)
 - [Usage](#usage)
@@ -11,22 +11,22 @@ Because parse-args is just a single function and has no dependency, you can use 
 
 Install it with NPM:
 ```sh
-npm i parse-args --save
+npm i flex-params --save
 ```
 
 Import it with `require()` in your JS:
 ```js
-const parseArgs = require('parse-args');
+const flexParams = require('flex-params');
 ```
 
 ## Usage
-Call `parseArgs()` inside your function to parse the flexible arguments according to the *patterns* (explained later) you desired.
+Call `flexParams()` inside your function to parse the flexible arguments according to the *patterns* (explained later) you desired.
 
 ```js
 // Example code
 function someFunction(...args) {
   let data = {};
-  parseArgs(args, data, [
+  flexParams(args, data, [
     { /* pattern declaration */ },
     { /* another pattern declaration */ },
     { /* more pattern */ },
@@ -37,7 +37,7 @@ function someFunction(...args) {
 ```
 In the code above, `args` is an array of arguments.  
 `data` is a "receiver" object that the parsed arguments will be stored in as its properties.  
-The 3rd parameter of `parseArgs()` is an array of *patterns*.
+The 3rd parameter of `flexParams()` is an array of *patterns*.
 `args` will be parsed according to one of these patterns that **its parameter types matched for `args` at first**.
 
 ### Declaring a pattern
@@ -63,7 +63,7 @@ And here is an example pattern that actually works:
 `paramN: { type:'string', def:'ABC' }` is the same as if you write `paramN: 'string'` but it has the default value `'ABC'`.
 
 **Important:** The order **matters** because the each param corresponds to the each argument ordered as passed to your function.
-That means, in this example, `parseArgs()` checks if:
+That means, in this example, `flexParams()` checks if:
 - `args[0]` matches for `paramX`
 - `args[1]` matches for `paramY`
 - `args[2]` matches for `paramZ`
@@ -71,11 +71,11 @@ That means, in this example, `parseArgs()` checks if:
 
 ### Usage Example
 ```js
-const parseArgs = require('parse-args');
+const flexParams = require('flex-params');
 
 class User {
   constructor(...args) {
-    parseArgs(args, this, [
+    flexParams(args, this, [
       // patterns
       { firstName:'string', age:'int' },
       { firstName:'string', lastName:'string', age:'int' },
@@ -112,7 +112,7 @@ User { login: 'd4rk10rd', pass: Password { key: 'asdf' } }
 ```
 
 ## Appendix: Extra types supported
-parse-args supports some special types in addition to [JavaScript's builtin datatypes](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures).
+flex-params supports some special types in addition to [JavaScript's builtin datatypes](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures).
 
 | type | description |
 |:-----|:------------|
