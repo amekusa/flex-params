@@ -1,8 +1,16 @@
 {
   "name": "parse-args",
   "version": "1.0.0",
-  "description": "Smartly implement flexible function arguments",
+  "description": "Smartly implement flexible function parameters",
   "main": "index.js",
   "author": "amekusa (https://amekusa.com)",
-  "license": "ISC"
+  "license": "ISC",
+  "keywords": [
+    "utility",
+    "function",
+    "parameters",
+    "params",
+    "arguments",
+    "args"
+  ]
 }
