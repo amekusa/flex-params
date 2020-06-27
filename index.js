@@ -40,7 +40,7 @@ function isTypeOf(value, type) {
 }
 
 /**
- * @param  {string} type
+ * @param {string} type
  * @return {mixed} Default value for the type
  */
 function defaultValue(type) {
@@ -93,9 +93,9 @@ function normalizeParam(param) {
 
 /**
  * Parses args according to the specified patterns
- * @param   {array} args
- * @param  {object} receiver
- * @param   {array} patterns
+ * @param  {array} args
+ * @param {object} receiver
+ * @param  {array} patterns
  * @return {object|boolean} Matched pattern, or False if no matched pattern
  */
 module.exports = function(args, receiver, patterns) {
@@ -108,8 +108,11 @@ module.exports = function(args, receiver, patterns) {
 		for (var j = 0; j < props.length; j++) {
 			if ((args.length-1) < j) { // Fewer arguments
 				// Normalize all the rest of the params
-				for (; j < props.length; j++) pat[props[j]] = normalizeParam(pat[props[j]]);
-				// TODO: Check 'required' flags
+				for (; j < props.length; j++) {
+					var param = normalizeParam(pat[props[j]]);
+					pat[props[j]] = param;
+					// TODO: Check if param is optional or required
+				}
 				break;
 			}
 			var param = normalizeParam(pat[props[j]]);
@@ -122,11 +125,6 @@ module.exports = function(args, receiver, patterns) {
 		}
 		if (!found) continue;
 
-		/* DEBUG ////////
-		console.debug('MATCHED ARGS:', args);
-		console.debug('> MATCHED PATTERN:', pat);
-		//////// DEBUG */
-
 		for (var j = 0; j < props.length; j++) {
 			var prop = props[j];
 			var param = pat[prop];
@@ -136,6 +134,13 @@ module.exports = function(args, receiver, patterns) {
 			}
 			receiver[prop] = args[j];
 		}
+
+		/* DEBUG ////////
+		console.debug('ARGUMENTS:', args);
+		console.debug(':: MATCHED PATTERN:', pat);
+		console.debug(':: RESULTING OBJ:', receiver);
+		//////// DEBUG */
+
 		return pat;
 	}
 	return false;
