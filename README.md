@@ -57,10 +57,13 @@ And here is an example pattern that actually works:
   paramX: 'int',
   paramY: 'boolean',
   paramZ: 'array',
-  paramN: { type:'string', def:'ABC' }
+  paramN: { type:'string', def:'ABC' },
+  paramM: ['string', 'ABC']
 }
 ```
 `paramN: { type:'string', def:'ABC' }` is the same as if you write `paramN: 'string'` but it has the default value `'ABC'`.
+
+`paramM: ['string', 'ABC']` is a shorthand for `paramM: { type:'string', def:'ABC' }`.
 
 **Important:** The order **matters** because the each param corresponds to the each argument ordered as passed to your function.
 That means, in this example, `flexParams()` checks if:
@@ -68,6 +71,7 @@ That means, in this example, `flexParams()` checks if:
 - `args[1]` matches for `paramY`
 - `args[2]` matches for `paramZ`
 - `args[3]` matches for `paramN`
+- `args[4]` matches for `paramM`
 
 ### Usage Example
 ```js
@@ -101,7 +105,6 @@ console.log(thomas);
 console.log(john);
 console.log(user1);
 console.log(user2);
-
 ```
 Console outputs:
 ```js

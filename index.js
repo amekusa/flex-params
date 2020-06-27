@@ -5,11 +5,14 @@
  * Released under the ISC License
  */
 
-function error(code = 'UNKNOWN') {
-	return new Error({
-		TYPE_MISSING: "You MUST specify the type of every parameter",
-		UNKNOWN: "Unknown Error"
-	}[code]);
+function error(name) {
+	var r = new Error({
+		InvalidPatternFormat: "The parameters pattern should be an object",
+		InvalidParamFormat: "The parameter format should be a string, an array, or an object",
+		ParamTypeMissing: "You must specify the type of the parameter"
+	}[name]);
+	r.name = name;
+	return r;
 }
 
 function isTypeOf(value, type) {
@@ -36,20 +39,12 @@ function isTypeOf(value, type) {
 	return false;
 }
 
-function getType(param) {
-	if (typeof param == 'object') {
-		if ('type' in param) return param.type;
-		throw error('TYPE_MISSING');
-	}
-	return param;
-}
-
-function defaultValue(param) {
-	if (typeof param == 'object') {
-		if ('def' in param) return param.def;
-		if ('default' in param) return param.default;
-	}
-	switch (getType(param)) {
+/**
+ * @param {string} type
+ * @return {mixed} Default value for the type
+ */
+function defaultValue(type) {
+	switch (type) {
 	case 'bool':
 	case 'boolean':
 		return false;
@@ -68,23 +63,62 @@ function defaultValue(param) {
 }
 
 /**
+ * @param {string|array|object} param
+ * @return {object} Normalized param object
+ */
+function normalizeParam(param) {
+	var r = {};
+	var x = typeof param;
+	if (x == 'string') {
+		r.type = param;
+		r.def = defaultValue(param);
+
+	} else if (x == 'object') {
+		if (Array.isArray(param)) {
+			if (!param[0]) throw error('ParamTypeMissing');
+			r.type = param[0];
+			r.def = param[1] || defaultValue(r.type);
+
+		} else {
+			r.type = param.type || param.t;
+			if (!r.type) throw error('ParamTypeMissing');
+			r.def = param.def || param.d || defaultValue(r.type);
+		}
+
+	} else throw error('InvalidParamFormat');
+
+	r._n = true; // Mark as normalized
+	return r;
+}
+
+/**
  * Parses args according to the specified patterns
- * @param   {array} args
- * @param  {object} receiver
- * @param   {array} patterns
+ * @param  {array} args
+ * @param {object} receiver
+ * @param  {array} patterns
  * @return {object|boolean} Matched pattern, or False if no matched pattern
  */
 module.exports = function(args, receiver, patterns) {
 	for (var i = 0; i < patterns.length; i++) {
 		var pat = patterns[i];
+		if (typeof pat != 'object') throw error('InvalidPatternFormat');
 		var props = Object.keys(pat);
 
 		var found = true;
 		for (var j = 0; j < props.length; j++) {
-			if ((args.length-1) < j) break;
-			var param = pat[props[j]];
-			var type = getType(param);
-			if (!isTypeOf(args[j], type)) {
+			if ((args.length-1) < j) { // Fewer arguments
+				// Normalize all the rest of the params
+				for (; j < props.length; j++) {
+					var param = normalizeParam(pat[props[j]]);
+					pat[props[j]] = param;
+					// TODO: Check if param is optional or required
+				}
+				break;
+			}
+			var param = normalizeParam(pat[props[j]]);
+			pat[props[j]] = param;
+
+			if (!isTypeOf(args[j], param.type)) { // Type mismatch
 				found = false;
 				break;
 			}
@@ -94,13 +128,19 @@ module.exports = function(args, receiver, patterns) {
 		for (var j = 0; j < props.length; j++) {
 			var prop = props[j];
 			var param = pat[prop];
-
-			if ((args.length-1) < j) {
-				receiver[prop] = defaultValue(param);
+			if ((args.length-1) < j) { // Fewer arguments
+				receiver[prop] = param.def;
 				continue;
 			}
 			receiver[prop] = args[j];
 		}
+
+		/* DEBUG ////////
+		console.debug('ARGUMENTS:', args);
+		console.debug(':: MATCHED PATTERN:', pat);
+		console.debug(':: RESULTING OBJ:', receiver);
+		//////// DEBUG */
+
 		return pat;
 	}
 	return false;
