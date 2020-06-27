@@ -8,7 +8,7 @@
 function error(name) {
 	var r = new Error({
 		InvalidPatternFormat: "The parameters pattern should be an object",
-		InvalidParamFormat: "The parameter format should be a string or an object",
+		InvalidParamFormat: "The parameter format should be a string, an array, or an object",
 		ParamTypeMissing: "You must specify the type of the parameter"
 	}[name]);
 	r.name = name;
@@ -63,7 +63,7 @@ function defaultValue(type) {
 }
 
 /**
- * @param  {string|object} param
+ * @param {string|array|object} param
  * @return {object} Normalized param object
  */
 function normalizeParam(param) {
@@ -74,9 +74,16 @@ function normalizeParam(param) {
 		r.def = defaultValue(param);
 
 	} else if (x == 'object') {
-		r.type = param.type || param.t;
-		if (!r.type) throw error('ParamTypeMissing');
-		r.def = param.def || param.d || defaultValue(r.type);
+		if (Array.isArray(param)) {
+			if (!param[0]) throw error('ParamTypeMissing');
+			r.type = param[0];
+			r.def = param[1] || defaultValue(r.type);
+
+		} else {
+			r.type = param.type || param.t;
+			if (!r.type) throw error('ParamTypeMissing');
+			r.def = param.def || param.d || defaultValue(r.type);
+		}
 
 	} else throw error('InvalidParamFormat');
 
