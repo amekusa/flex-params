@@ -40,30 +40,32 @@ function isTypeOf(value, type) {
 }
 
 /**
- * @param {string|array|object} param
+ * @param {string|array|object|function} param
  * @return {object} Normalized param object
  */
 function normalizeParam(param) {
 	var r = {};
-	var x = typeof param;
-	if (x == 'string') {
+	switch (typeof param) {
+	case 'string': // The type name
 		r.type = param;
-		r.def = undefined; // This line is unnecessary for sure
-
-	} else if (x == 'object') {
+		break;
+	case 'object': // A set of the type and the default value
 		if (Array.isArray(param)) {
 			if (!param[0]) throw error('ParamTypeMissing');
 			r.type = param[0];
 			r.def = param[1];
-
 		} else {
 			r.type = param.type || param.t;
 			if (!r.type) throw error('ParamTypeMissing');
 			r.def = param.def || param.d || undefined;
 		}
-
-	} else throw error('InvalidParamFormat');
-
+		break;
+	case 'function': // A class(constructor) as the type
+		r.type = param;
+		break;
+	default:
+		throw error('InvalidParamFormat');
+	}
 	r._n = true; // Mark as normalized
 	return r;
 }
