@@ -4,7 +4,7 @@
   "description": "Smartly implement flexible function parameters",
   "main": "index.js",
   "scripts": {
-    "test": "node test.js"
+    "test": "mocha"
   },
   "author": "amekusa (https://amekusa.com)",
   "license": "ISC",
