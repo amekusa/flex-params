@@ -80,9 +80,9 @@ function isRequired(param) {
 
 /**
  * Parses args according to the specified patterns
- * @param  {array} args
- * @param  {array} patterns
- * @param {object} receiver
+ * @param           {array} args
+ * @param           {array} patterns
+ * @param {object|function} receiver
  * @return {object|boolean} Matched pattern, or False if no matched pattern
  */
 module.exports = function(args, patterns, receiver) {
@@ -98,35 +98,34 @@ module.exports = function(args, patterns, receiver) {
 				for (; j < props.length; j++) {
 					var param = normalizeParam(pat[props[j]]);
 					pat[props[j]] = param;
-
-					// A non-optional param found. Skip to the next pattern
+					// A non-optional param found. Go to the next pattern
 					if (isRequired(param)) continue mainLoop;
 				}
 				break;
 			}
 			var param = normalizeParam(pat[props[j]]);
 			pat[props[j]] = param;
-
-			// Type mismatch. Skip to the next pattern
+			// Type mismatch. Go to the next pattern
 			if (!isTypeOf(args[j], param.type)) continue mainLoop;
 		}
+		var rType = typeof receiver;
+		var r = rType == 'object' ? receiver : {};
 		for (var j = 0; j < props.length; j++) {
 			var prop = props[j];
 			var param = pat[prop];
 			if ((args.length-1) < j) { // Fewer arguments
-				receiver[prop] = param.def;
+				r[prop] = param.def;
 				continue;
 			}
-			receiver[prop] = args[j];
+			r[prop] = args[j];
 		}
-
 		/* DEBUG ////////
 		console.debug('ARGUMENTS:', args);
 		console.debug(':: MATCHED PATTERN:', `#${i+1}/${patterns.length}`, pat);
 		console.debug(':: RESULTING OBJ:', receiver);
 		//////// DEBUG */
 
-		return pat;
+		return (rType == 'function' ? receiver(r, i) : pat);
 	}
 	return false;
 }
