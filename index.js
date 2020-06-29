@@ -63,7 +63,7 @@ function defaultValue(type) {
 }
 
 /**
- * @param {string|array|object|function} param
+ * @param {string|array|object} param
  * @return {object} Normalized param object
  */
 function normalizeParam(param) {
@@ -84,10 +84,6 @@ function normalizeParam(param) {
 			if (!r.type) throw error('ParamTypeMissing');
 			r.def = param.def || param.d || defaultValue(r.type);
 		}
-
-	} else if (x == 'function') {
-		r.type = param;
-		r.def = null;
 
 	} else throw error('InvalidParamFormat');
 
