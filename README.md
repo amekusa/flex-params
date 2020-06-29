@@ -12,9 +12,13 @@ Because flex-params itself is just a single function and has no dependency, you 
 
 - [Getting Started](#getting-started)
 - [Usage](#usage)
-  - [Declaring a pattern](#declaring-a-pattern)
-  - [Usage Examples](#usage-examples)
+  - [Defining a pattern of parameters](#defining-a-pattern-of-parameters)
+    - [Setting default values](#setting-default-values)
+  - [Let's see how it works](#lets-see-how-it-works)
+  - [Another Example](#another-example)
 - [Appendix: Extra types supported](#appendix-extra-types-supported)
+
+---
 
 ## Getting Started
 Install it with NPM:
