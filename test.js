@@ -2,13 +2,14 @@ const flexParams = require('./index.js');
 
 class User {
   constructor(...args) {
-    flexParams(args, this, [
+    flexParams(args, [
       // patterns
       { firstName:'string', age:'int' },
       { firstName:'string', lastName:'string', age:'int' },
       { id:'int' },
       { login:'string', pass:Password }
-    ]);
+
+    ], this);
   }
 }
 
