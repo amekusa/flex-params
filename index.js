@@ -81,11 +81,11 @@ function isRequired(param) {
 /**
  * Parses args according to the specified patterns
  * @param  {array} args
- * @param {object} receiver
  * @param  {array} patterns
+ * @param {object} receiver
  * @return {object|boolean} Matched pattern, or False if no matched pattern
  */
-module.exports = function(args, receiver, patterns) {
+module.exports = function(args, patterns, receiver) {
 	mainLoop:
 	for (var i = 0; i < patterns.length; i++) {
 		var pat = patterns[i];
