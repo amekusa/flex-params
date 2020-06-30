@@ -44,6 +44,8 @@ describe('Specs:', () => {
 describe(`Examples:`, () => {
 	it(`Example #1`, example);
 	it(`Example #2`, example2);
+	it(`Example #3`, example3);
+	it(`Example #3-2`, example3_2);
 });
 
 function example() {
@@ -52,9 +54,9 @@ function example() {
 		let result = {};
 
 		flexParams(args, [
-			{ flag:['boolean', false] },         // pattern #1
-			{ str:'string', num:['number', 1] }, // pattern #2
-			{ num:'number', flag:'boolean' }     // pattern #3
+			{ flag:['boolean', false] },         // pattern #0
+			{ str:'string', num:['number', 1] }, // pattern #1
+			{ num:'number', flag:'boolean' }     // pattern #2
 		], result);
 
 		return result;
@@ -108,4 +110,43 @@ function example2() {
 	assert.deepEqual(john,   { firstName:'John', lastName:'Doe', age:30 });
 	assert.deepEqual(user1,  { id:1000 });
 	assert.deepEqual(user2,  { login:'d4rk10rd', pass:{ key:'asdf' } });
+}
+
+function example3() {
+	function foo(...args) {
+		flexParams(args, [
+			{ flag:['boolean', false] },         // pattern #0
+			{ str:'string', num:['number', 1] }, // pattern #1
+			{ num:'number', flag:'boolean' }     // pattern #2
+
+		], (result, pattern) => { // Receiver Callback
+			console.log('result:',  result);
+			console.log('pattern:', pattern);
+
+			assert
+		});
+	}
+	//// Test ////////
+	foo('XYZ', 512);
+}
+
+function example3_2() {
+	function foo(...args) {
+		return flexParams(args, [
+			{ flag:['boolean', false] },         // pattern #0
+			{ str:'string', num:['number', 1] }, // pattern #1
+			{ num:'number', flag:'boolean' }     // pattern #2
+
+		], (result, pattern) => { // Receiver Callback
+			switch (pattern) { // Do stuff for each pattern
+				case 0: return 'The first pattern matched.';
+				case 1: return 'The second pattern matched.';
+				case 2: return 'The last pattern matched.';
+			}
+		});
+	}
+	//// Test ////////
+	console.log( foo('XYZ', 512)   ); // 'The second pattern matched.'
+	console.log( foo(65535, false) ); // 'The last pattern matched.'
+	console.log( foo()             ); // 'The first pattern matched.'
 }
