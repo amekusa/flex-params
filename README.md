@@ -10,20 +10,23 @@ Yes, still you can do the same thing with default parameters most of the time. B
 
 Because flex-params itself is just a single function and has no dependency, you can use it for any kind of projects with no problem.
 
+<!-- TOC depthFrom:2 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
+
 - [Getting Started](#getting-started)
 - [Usage](#usage)
-  - [Defining a pattern of parameters](#defining-a-pattern-of-parameters)
-    - [Setting default values](#setting-default-values)
-  - [Let's see how it works](#lets-see-how-it-works)
-  - [Another Example](#another-example)
+	- [Defining a pattern of parameters](#defining-a-pattern-of-parameters)
+		- [Setting default values](#setting-default-values)
+	- [Let's see how it works](#lets-see-how-it-works)
+	- [Another Example](#another-example)
+	- [Advanced Usage](#advanced-usage)
 - [Appendix: Extra types supported](#appendix-extra-types-supported)
 
----
+<!-- /TOC -->
 
 ## Getting Started
 Install it with NPM:
 ```sh
-npm i flex-params --save
+npm i flex-params
 ```
 
 Import it with `require()` in your JS:
@@ -32,21 +35,21 @@ const flexParams = require('flex-params');
 ```
 
 ## Usage
-In your function, pass the array of arguments to `flexParams()` with any number of **patterns of parameters** (explained later) you desired.
+In your function, pass the array of arguments to `flexParams()` with any number of **patterns of parameters** <small>( explained later )</small> you desired.
 
 ```js
-//# Example Code
+//# Example Code #1
 function foo(...args) {
-  let result = {};
+	let result = {};
 
-  flexParams(args, [
-    { /*     pattern definition     */ },
-    { /* another pattern definition */ },
-    { /*  more pattern if you want  */ },
-    // ...
-  ], result);
+	flexParams(args, [
+		{ /*     pattern definition     */ },
+		{ /* another pattern definition */ },
+		{ /*  more pattern if you want  */ },
+		// ...
+	], result);
 
-  return result;
+	return result;
 }
 foo('A', 'B', 'C');
 ```
@@ -54,18 +57,19 @@ In the code above, `args` is the array of arguments.
 
 The 2nd parameter of `flexParams()` is an array of the *patterns*.  
 `flexParams()` tries to find **the suitable pattern at the first** in the array by comparing each pattern with `args`.  
-Once it is found, each item of `args` is stored into `result` (the 3rd parameter) as its properties.
+Once it is found, each item of `args` is stored into `result` <small>( the 3rd parameter )</small> as its properties.
 
 ### Defining a pattern of parameters
 Each pattern must be a plain object that has one of some specific formats.  
 The most basic format is like this:
+
 ```js
 //# Pattern Definition
 {
-  <1st-param>: '<type>',
-  <2nd-param>: '<type>',
-  ...
-  <nth-param>: '<type>'
+	<1st-param>: '<type>',
+	<2nd-param>: '<type>',
+	...
+	<nth-param>: '<type>'
 }
 ```
 
@@ -87,7 +91,7 @@ In the alternative format, instead of `'<type>'`, you can use an array such as:
 ```
 
 So if you want to assign `false` as the default value to `bar`,  
-it would be like this:
+it would look like this:
 ```js
 { foo:'string', bar:['boolean', false] }
 ```
@@ -97,17 +101,17 @@ The pattern that contains optional parameters can be considered suitable even if
 
 ### Let's see how it works
 ```js
-//# Example Code
+//# Example Code #1
 function foo(...args) {
-  let result = {};
+	let result = {};
 
-  flexParams(args, [
-    { flag:['boolean', false] },         // pattern #1
-    { str:'string', num:['number', 1] }, // pattern #2
-    { num:'number', flag:'boolean' }     // pattern #3
-  ], result);
+	flexParams(args, [
+		{ flag:['boolean', false] },         // pattern #0
+		{ str:'string', num:['number', 1] }, // pattern #1
+		{ num:'number', flag:'boolean' }     // pattern #2
+	], result);
 
-  return result;
+	return result;
 }
 ```
 
@@ -131,31 +135,32 @@ Test 3: { num: 8, flag: true }
 ```
 
 And you can see:
-- The test1 arguments matched with pattern #1
-- The test2 arguments matched with pattern #2
-- The test3 arguments matched with pattern #3
+- The test1 arguments matched with pattern #0
+- The test2 arguments matched with pattern #1
+- The test3 arguments matched with pattern #2
 
 ### Another Example
 ```js
+//# Example Code #2
 const flexParams = require('flex-params');
 
 class User {
-  constructor(...args) {
-    flexParams(args, [
-      // patterns
-      { firstName:'string', age:'int' },
-      { firstName:'string', lastName:'string', age:'int' },
-      { id:'int' },
-      { login:'string', pass:Password }
+	constructor(...args) {
+		flexParams(args, [
+			// patterns
+			{ firstName:'string', age:'int' },
+			{ firstName:'string', lastName:'string', age:'int' },
+			{ id:'int' },
+			{ login:'string', pass:Password }
 
-    ], this);
-  }
+		], this); // Stores the args into 'this'
+	}
 }
 
 class Password {
-  constructor(key) {
-    this.key = key;
-  }
+	constructor(key) {
+		this.key = key;
+	}
 }
 
 //// Test ////////////
@@ -178,17 +183,72 @@ User { id: 1000 }
 User { login: 'd4rk10rd', pass: Password { key: 'asdf' } }
 ```
 
-As you can see this example, you can pass `this` as the receiver object to `flexParams()`. This way is useful for **initializing the instance** in the class constructor.
+As you can see this example, you can pass `this` to the 3rd parameter of `flexParams()`. This way is useful for **initializing the instance** in the class constructor.
+
+### Advanced Usage
+About the 3rd parameter of `flexParams()`, it accepts not only an object but also a **function**.  
+Look at this code:
+
+```js
+function foo(...args) {
+	flexParams(args, [
+		{ flag:['boolean', false] },         // pattern #0
+		{ str:'string', num:['number', 1] }, // pattern #1
+		{ num:'number', flag:'boolean' }     // pattern #2
+
+	], (result, pattern) => { // Receiver Callback
+		console.log('result:',  result);
+		console.log('pattern:', pattern);
+	});
+	// Test ////////
+  foo('XYZ', 512);
+}
+```
+
+Console outputs:
+
+```js
+result: { str: 'XYZ', num: 512 }
+pattern: 1
+```
+
+Let's call this function a **receiver callback**. Receiver callback runs immediately after `flexParams()` finished processing `args`.
+
+Receiver callback takes 2 parameters: `result` and `pattern`.  
+ `result` is an object that contains all the `args` as its properties. `pattern` is **the index number of the matched pattern**, which is `1` <small>( means pattern #1 )</small> at this time.  
+This index is useful if you want to do some different things for each pattern with `switch-case` or `if-else-if`, like this:
+
+```js
+function foo(...args) {
+	return flexParams(args, [
+		{ flag:['boolean', false] },         // pattern #0
+		{ str:'string', num:['number', 1] }, // pattern #1
+		{ num:'number', flag:'boolean' }     // pattern #2
+
+	], (result, pattern) => { // Receiver Callback
+		switch (pattern) { // Do stuff for each pattern
+			case 0: return 'The first pattern matched.';
+			case 1: return 'The second pattern matched.';
+			case 2: return 'The last pattern matched.';
+		}
+	});
+}
+//// Test ////////
+console.log( foo('XYZ', 512)   ); // 'The second pattern matched.'
+console.log( foo(65535, false) ); // 'The last pattern matched.'
+console.log( foo()             ); // 'The first pattern matched.'
+```
 
 ## Appendix: Extra types supported
+
 flex-params supports some special types in addition to [JavaScript's builtin datatypes](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures).
 
 | type | description |
-|:-----|:------------|
-| bool | Alias of `boolean` |
-| int, integer | Matches for integers |
-| float, double | Matches for `number`s except for integers |
-| array | Matches for arrays |
+|-----:|:------------|
+| `bool` | Alias of `boolean` |
+| `int` `integer` | Matches for integers |
+| `float` `double` | Matches for `number`s except for integers |
+| `array` | Matches for arrays |
 | A class constructor | Matches for the class instances |
 
 ---
