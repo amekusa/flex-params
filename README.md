@@ -10,18 +10,14 @@ Yes, still you can do the same thing with default parameters most of the time. B
 
 Because flex-params itself is just a single function and has no dependency, you can use it for any kind of projects with no problem.
 
-<!-- TOC depthFrom:2 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
-
 - [Getting Started](#getting-started)
 - [Usage](#usage)
-	- [Defining a pattern of parameters](#defining-a-pattern-of-parameters)
-		- [Setting default values](#setting-default-values)
-	- [Let's see how it works](#lets-see-how-it-works)
-	- [Another Example](#another-example)
-	- [Advanced Usage](#advanced-usage)
+  - [Defining a pattern of parameters](#defining-a-pattern-of-parameters)
+    - [Setting default values](#setting-default-values)
+  - [Let's see how it works](#lets-see-how-it-works)
+  - [Another Example](#another-example)
+  - [Advanced Usage](#advanced-usage)
 - [Appendix: Extra types supported](#appendix-extra-types-supported)
-
-<!-- /TOC -->
 
 ## Getting Started
 Install it with NPM:
@@ -40,16 +36,16 @@ In your function, pass the array of arguments to `flexParams()` with any number 
 ```js
 //# Example Code #1
 function foo(...args) {
-	let result = {};
+  let result = {};
 
-	flexParams(args, [
-		{ /*     pattern definition     */ },
-		{ /* another pattern definition */ },
-		{ /*  more pattern if you want  */ },
-		// ...
-	], result);
+  flexParams(args, [
+    { /*     pattern definition     */ },
+    { /* another pattern definition */ },
+    { /*  more pattern if you want  */ },
+    // ...
+  ], result);
 
-	return result;
+  return result;
 }
 foo('A', 'B', 'C');
 ```
@@ -66,10 +62,10 @@ The most basic format is like this:
 ```js
 //# Pattern Definition
 {
-	<1st-param>: '<type>',
-	<2nd-param>: '<type>',
-	...
-	<nth-param>: '<type>'
+  <1st-param>: '<type>',
+  <2nd-param>: '<type>',
+  ...
+  <nth-param>: '<type>'
 }
 ```
 
@@ -103,15 +99,15 @@ The pattern that contains optional parameters can be considered suitable even if
 ```js
 //# Example Code #1
 function foo(...args) {
-	let result = {};
+  let result = {};
 
-	flexParams(args, [
-		{ flag:['boolean', false] },         // pattern #0
-		{ str:'string', num:['number', 1] }, // pattern #1
-		{ num:'number', flag:'boolean' }     // pattern #2
-	], result);
+  flexParams(args, [
+    { flag:['boolean', false] },         // pattern #0
+    { str:'string', num:['number', 1] }, // pattern #1
+    { num:'number', flag:'boolean' }     // pattern #2
+  ], result);
 
-	return result;
+  return result;
 }
 ```
 
@@ -145,22 +141,22 @@ And you can see:
 const flexParams = require('flex-params');
 
 class User {
-	constructor(...args) {
-		flexParams(args, [
-			// patterns
-			{ firstName:'string', age:'int' },
-			{ firstName:'string', lastName:'string', age:'int' },
-			{ id:'int' },
-			{ login:'string', pass:Password }
+  constructor(...args) {
+    flexParams(args, [
+      // patterns
+      { firstName:'string', age:'int' },
+      { firstName:'string', lastName:'string', age:'int' },
+      { id:'int' },
+      { login:'string', pass:Password }
 
-		], this); // Stores the args into 'this'
-	}
+    ], this); // Stores the args into 'this'
+  }
 }
 
 class Password {
-	constructor(key) {
-		this.key = key;
-	}
+  constructor(key) {
+    this.key = key;
+  }
 }
 
 //// Test ////////////
@@ -191,16 +187,16 @@ Look at this code:
 
 ```js
 function foo(...args) {
-	flexParams(args, [
-		{ flag:['boolean', false] },         // pattern #0
-		{ str:'string', num:['number', 1] }, // pattern #1
-		{ num:'number', flag:'boolean' }     // pattern #2
+  flexParams(args, [
+    { flag:['boolean', false] },         // pattern #0
+    { str:'string', num:['number', 1] }, // pattern #1
+    { num:'number', flag:'boolean' }     // pattern #2
 
-	], (result, pattern) => { // Receiver Callback
-		console.log('result:',  result);
-		console.log('pattern:', pattern);
-	});
-	// Test ////////
+  ], (result, pattern) => { // Receiver Callback
+    console.log('result:',  result);
+    console.log('pattern:', pattern);
+  });
+  // Test ////////
   foo('XYZ', 512);
 }
 ```
@@ -220,18 +216,18 @@ This index is useful if you want to do some different things for each pattern wi
 
 ```js
 function foo(...args) {
-	return flexParams(args, [
-		{ flag:['boolean', false] },         // pattern #0
-		{ str:'string', num:['number', 1] }, // pattern #1
-		{ num:'number', flag:'boolean' }     // pattern #2
+  return flexParams(args, [
+    { flag:['boolean', false] },         // pattern #0
+    { str:'string', num:['number', 1] }, // pattern #1
+    { num:'number', flag:'boolean' }     // pattern #2
 
-	], (result, pattern) => { // Receiver Callback
-		switch (pattern) { // Do stuff for each pattern
-			case 0: return 'The first pattern matched.';
-			case 1: return 'The second pattern matched.';
-			case 2: return 'The last pattern matched.';
-		}
-	});
+  ], (result, pattern) => { // Receiver Callback
+    switch (pattern) { // Do stuff for each pattern
+      case 0: return 'The first pattern matched.';
+      case 1: return 'The second pattern matched.';
+      case 2: return 'The last pattern matched.';
+    }
+  });
 }
 //// Test ////////
 console.log( foo('XYZ', 512)   ); // 'The second pattern matched.'
