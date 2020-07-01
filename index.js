@@ -108,8 +108,8 @@ module.exports = function(args, patterns, receiver) {
 			// Type mismatch. Go to the next pattern
 			if (!isTypeOf(args[j], param.type)) continue mainLoop;
 		}
-		var rType = typeof receiver;
-		var r = rType == 'object' ? receiver : {};
+		var isFunction = typeof receiver == 'function';
+		var r = isFunction ? {} : receiver;
 		for (var j = 0; j < props.length; j++) {
 			var prop = props[j];
 			var param = pat[prop];
@@ -125,7 +125,7 @@ module.exports = function(args, patterns, receiver) {
 		console.debug(':: RESULTING OBJ:', receiver);
 		//////// DEBUG */
 
-		return (rType == 'function' ? receiver(r, i) : pat);
+		return (isFunction ? receiver(r, i) : pat);
 	}
 	return false;
 }
