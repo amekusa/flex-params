@@ -85,7 +85,7 @@ function isRequired(param) {
  * @param {object|function} receiver
  * @return {object|boolean} Matched pattern, or False if no matched pattern
  */
-module.exports = function(args, patterns, receiver) {
+module.exports = function(args, patterns, receiver, fallback = undefined) {
 	mainLoop:
 	for (var i = 0; i < patterns.length; i++) {
 		var pat = patterns[i];
@@ -127,5 +127,8 @@ module.exports = function(args, patterns, receiver) {
 
 		return (isFunction ? receiver(r, i) : pat);
 	}
-	return false;
+	if (fallback === undefined) return false;
+	if (typeof fallback == 'function') return fallback(args);
+	if (fallback instanceof Error) throw fallback;
+	return fallback;
 }
