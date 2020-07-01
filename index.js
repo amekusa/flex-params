@@ -83,6 +83,7 @@ function isRequired(param) {
  * @param           {array} args
  * @param           {array} patterns
  * @param {object|function} receiver
+ * @param             {any} fallback=undefined
  * @return {object|boolean} Matched pattern, or False if no matched pattern
  */
 module.exports = function(args, patterns, receiver, fallback = undefined) {
