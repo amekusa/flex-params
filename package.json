@@ -3,6 +3,8 @@
   "version": "2.1.0",
   "description": "Smartly implement flexible function parameters",
   "main": "index.js",
+  "files": [
+  ],
   "scripts": {
     "test": "mocha"
   },

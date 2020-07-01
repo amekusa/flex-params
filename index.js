@@ -83,9 +83,10 @@ function isRequired(param) {
  * @param           {array} args
  * @param           {array} patterns
  * @param {object|function} receiver
+ * @param             {any} fallback=undefined
  * @return {object|boolean} Matched pattern, or False if no matched pattern
  */
-module.exports = function(args, patterns, receiver) {
+module.exports = function(args, patterns, receiver, fallback = undefined) {
 	mainLoop:
 	for (var i = 0; i < patterns.length; i++) {
 		var pat = patterns[i];
@@ -108,8 +109,8 @@ module.exports = function(args, patterns, receiver) {
 			// Type mismatch. Go to the next pattern
 			if (!isTypeOf(args[j], param.type)) continue mainLoop;
 		}
-		var rType = typeof receiver;
-		var r = rType == 'object' ? receiver : {};
+		var isFunction = typeof receiver == 'function';
+		var r = isFunction ? {} : receiver;
 		for (var j = 0; j < props.length; j++) {
 			var prop = props[j];
 			var param = pat[prop];
@@ -125,7 +126,10 @@ module.exports = function(args, patterns, receiver) {
 		console.debug(':: RESULTING OBJ:', receiver);
 		//////// DEBUG */
 
-		return (rType == 'function' ? receiver(r, i) : pat);
+		return (isFunction ? receiver(r, i) : pat);
 	}
-	return false;
+	if (fallback === undefined) return false;
+	if (typeof fallback == 'function') return fallback(args);
+	if (fallback instanceof Error) throw fallback;
+	return fallback;
 }

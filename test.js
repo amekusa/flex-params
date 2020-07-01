@@ -15,7 +15,12 @@ describe('Specs:', () => {
 		{ str:'string', num:['number', 1], name:['string', 'bravo'] },
 		{ num:'number', flag:'boolean', name:['string', 'charlie'] }
 	];
-	describe(`If the receiver is a object,`, () => {
+	describe(`If the receiver is an object,`, () => {
+		it(`stores all the args into the object`, () => {
+			let r = {};
+			flexParams(['abc', 8], patterns, r);
+			assert.deepEqual(r, {str:'abc', num:8, name:'bravo'});
+		});
 		it(`returns the matched pattern`, () => {
 			let r = flexParams(['abc', 8], patterns, {});
 			assert.equal(r.name.def, 'bravo');
@@ -37,6 +42,33 @@ describe('Specs:', () => {
 				return 'R';
 			});
 			assert.equal(r, 'R');
+		});
+	});
+	describe(`If there is no pattern matched,`, () => {
+		it(`returns false if the fallback is undefined (default)`, () => {
+			let r = flexParams(['x', 'y', 'z'], patterns, {});
+			assert.equal(r, false);
+		});
+		it(`runs fallback(args) if it's a function, and returns the function's return`, () => {
+			let r = flexParams(['x', 'y', 'z'], patterns, {}, args => {
+				assert.deepEqual(args, ['x', 'y', 'z']);
+				return 'R';
+			});
+			assert.equal(r, 'R');
+		});
+		it(`throws the error if the fallback is an error`, () => {
+			let r;
+			let err = new Error('fallback');
+			try {
+				flexParams(['x', 'y', 'z'], patterns, {}, err);
+			} catch(e) {
+				r = e;
+			}
+			assert.deepEqual(r, err);
+		});
+		it(`returns the fallback if it's not undefined, a function, nor an error`, () => {
+			let r = flexParams(['x', 'y', 'z'], patterns, {}, 'FALLBACK');
+			assert.equal(r, 'FALLBACK');
 		});
 	});
 });
