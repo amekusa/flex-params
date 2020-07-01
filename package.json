@@ -1,10 +1,9 @@
 {
   "name": "flex-params",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Smartly implement flexible function parameters",
   "main": "index.js",
-  "files": [
-  ],
+  "files": [],
   "scripts": {
     "test": "mocha"
   },
