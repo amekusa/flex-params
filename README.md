@@ -235,6 +235,21 @@ console.log( foo(65535, false) ); // 'The last pattern matched.'
 console.log( foo()             ); // 'The first pattern matched.'
 ```
 
+### Error Handling
+
+If any of given patterns didn't match for the arguments, `flexParams()` returns `false`. But there are other options for handling such exceptions. `flexParams()` has **the 4th parameter: `fallback`** which accepts:
+
+​	a) **a callback**,  
+​	b) **an `Error` object**, or  
+​	c) **any other type of value** <small>( except for `undefined` )</small>.
+
+a) If you passed a callback, it is fired when all the given patterns mismatched.  
+Its parameter is `args` which is supplied with the same array as the 1st parameter of `flexParams()`.
+
+b) If you passed an `Error` object as the `fallback` , it is thrown when all the given patterns mismatched.
+
+c) Any other type of value as the `fallback` , is returned straightly by `flexParams()` if all the given patterns mismatched.
+
 ## Appendix: Extra types supported
 
 flex-params supports some special types in addition to [JavaScript's builtin datatypes](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures).
