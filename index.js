@@ -17,6 +17,11 @@ function error(name) {
 
 function isTypeOf(value, type) {
 	var actualType = typeof value;
+	if (actualType == 'object') {
+		if (Array.isArray(value)) return type == 'array';
+		if (type == 'object') return true;
+		return (typeof type == 'function' && value instanceof type);
+	}
 	if (actualType == type) return true;
 
 	switch (actualType) {
@@ -32,9 +37,6 @@ function isTypeOf(value, type) {
 			return true;
 		}
 		break;
-	case 'object':
-		if (type == 'array') return Array.isArray(value);
-		return (typeof type == 'function' && value instanceof type);
 	}
 	return false;
 }
