@@ -3,7 +3,9 @@
   "version": "2.3.0",
   "description": "Smartly implement flexible function parameters",
   "main": "index.js",
-  "files": [],
+  "files": [
+    "src"
+  ],
   "exports": {
     "import": "./src/index.js",
     "require": "./index.js"
