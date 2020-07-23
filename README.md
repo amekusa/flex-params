@@ -26,12 +26,20 @@ Install it with NPM:
 npm i flex-params
 ```
 
-Import it with `require()` in your JS:
+And `require()` it:
+
 ```js
 const flexParams = require('flex-params');
 ```
 
+Or `import` it as an ES module:
+
+```js
+import flexParams from 'flex-params';
+```
+
 ## Usage
+
 In your function, pass the array of arguments to `flexParams()` with any number of **patterns of parameters** <small>( explained later )</small> you desired.
 
 ```js
