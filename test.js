@@ -7,7 +7,7 @@
 
 const // Modules
 	assert = require('assert'),
-	flexParams = require('./index.js');
+	flexParams = require('./bundle.js');
 
 describe('Specs:', () => {
 	let patterns = [
@@ -49,24 +49,30 @@ describe('Specs:', () => {
 			let r = flexParams(['x', 'y', 'z'], patterns, {});
 			assert.equal(r, false);
 		});
-		it(`runs fallback(args) if it's a function, and returns the function's return`, () => {
-			let r = flexParams(['x', 'y', 'z'], patterns, {}, args => {
-				assert.deepEqual(args, ['x', 'y', 'z']);
+		it(`runs fallback() if it's a function, and returns the function's return`, () => {
+			let receiver = {};
+			let r = flexParams(['x', 'y', 'z'], patterns, receiver, arg => {
+				assert.deepEqual(arg.args, ['x', 'y', 'z']);
+				assert.deepEqual(arg.patterns, patterns);
+				assert.strictEqual(arg.receiver, receiver);
+				assert.ok(arg.error instanceof flexParams.InvalidArgument);
+				assert.deepEqual(arg.error.info.args, ['x', 'y', 'z']);
+				assert.deepEqual(arg.error.info.patterns, patterns);
 				return 'R';
 			});
 			assert.equal(r, 'R');
 		});
-		it(`throws the error if the fallback is an error`, () => {
+		it(`throws fallback.throw`, () => {
 			let r;
 			let err = new Error('fallback');
 			try {
-				flexParams(['x', 'y', 'z'], patterns, {}, err);
+				flexParams(['x', 'y', 'z'], patterns, {}, { throw: err });
 			} catch(e) {
 				r = e;
 			}
 			assert.deepEqual(r, err);
 		});
-		it(`returns the fallback if it's not undefined, a function, nor an error`, () => {
+		it(`returns the fallback if it's not undefined, a function, nor an object`, () => {
 			let r = flexParams(['x', 'y', 'z'], patterns, {}, 'FALLBACK');
 			assert.equal(r, 'FALLBACK');
 		});
@@ -74,13 +80,36 @@ describe('Specs:', () => {
 });
 
 describe(`Examples:`, () => {
-	it(`Example #1`, example);
+	it(`Example #0`, example0);
+	it(`Example #1`, example1);
 	it(`Example #2`, example2);
 	it(`Example #3`, example3);
 	it(`Example #3-2`, example3_2);
 });
 
-function example() {
+function example0() {
+	function foo(...args) {
+		var result = {};
+
+		flexParams(args, [
+			{ X:'string', Y:'int' },           // pattern #0
+			{ X:'string', Z:'bool', Y:'int' }, // pattern #1
+			{ Z:'bool', Y:'int', X:'string' }  // pattern #2
+		], result);
+
+		return result;
+	}
+
+	var r1 = foo('blah', 42);          // { X:'blah',   Y:42 }
+	var r2 = foo('blahh', true, 7);    // { X:'blahh',  Y:7,  Z:true }
+	var r3 = foo(false, 11, 'blaahh'); // { X:'blaahh', Y:11, Z:false }
+
+	console.log('r1:', r1);
+	console.log('r2:', r2);
+	console.log('r3:', r3);
+}
+
+function example1() {
 	//# Example Code
 	function foo(...args) {
 		let result = {};

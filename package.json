@@ -2,19 +2,19 @@
   "name": "flex-params",
   "version": "2.3.1",
   "description": "Smartly implement flexible function parameters",
-  "main": "index.js",
+  "main": "bundle.js",
   "files": [
     "src"
   ],
   "exports": {
     "import": "./src/index.js",
-    "require": "./index.js"
+    "require": "./bundle.js"
   },
   "scripts": {
     "devtools": "npm i --no-save rollup mocha npm-watch",
     "watch": "npm-watch",
     "test": "mocha",
-    "build": "rollup src/index.js --file index.js --format umd --name flex-params",
+    "build": "rollup src/index.js --file bundle.js --format umd --name flex-params",
     "prepublish": "npm run test && npm run build"
   },
   "watch": {

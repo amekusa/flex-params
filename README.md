@@ -1,24 +1,22 @@
 **flex-params** is a tiny, but powerful utility for writing a function that has flexible parameters.
 
-As you know, JavaScript doesn't allow **function overloading** like this:
+As you know, JavaScript doesn't support **function overloading** like this:
 ```js
 function foo(X)    { /* ... */ }
 function foo(X, Y) { /* ... */ } // This makes the 1st foo() not callable
 ```
 
-Yes, still you can do the same thing with default parameters most of the time. But if you want more flexibility or scalability, flex-params allows you to define **multiple combinations of parameters** for a single function.
-
-Because flex-params itself is just a single function and has no dependency, you can use it for any kind of projects with no problem.
+Yes, still you can do the same kind of thing with default parameters most of the time. But if you want more flexibility or scalability, flex-params allows you to define **multiple combinations of parameters** for a single function.
 
 - [Getting Started](#getting-started)
 - [Usage](#usage)
   - [Defining a pattern of parameters](#defining-a-pattern-of-parameters)
-    - [Setting default values](#setting-default-values)
+    - [Default Values](#default-values)
   - [Let's see how it works](#lets-see-how-it-works)
-  - [Another Example](#another-example)
+  - [More Example](#more-example)
   - [Advanced Usage](#advanced-usage)
   - [Error Handling](#error-handling)
-- [Appendix: Extra types supported](#appendix-extra-types-supported)
+- [Appendix: Extra Types](#appendix-extra-types)
 
 ## Getting Started
 Install it with NPM:
@@ -32,7 +30,7 @@ And `require()` it:
 const flexParams = require('flex-params');
 ```
 
-Or `import` it as an ES module:
+or `import` it as an ES module:
 
 ```js
 import flexParams from 'flex-params';
@@ -40,46 +38,50 @@ import flexParams from 'flex-params';
 
 ## Usage
 
-In your function, pass the array of arguments to `flexParams()` with any number of **patterns of parameters** <small>( explained later )</small> you desired.
+In your function, pass an array of the arguments to `flexParams()` with any number of **patterns of parameters** <small>( explained later )</small> you desired.
 
 ```js
-//# Example Code #1
+// Example Code
 function foo(...args) {
-  let result = {};
+  var result = {};
 
   flexParams(args, [
-    { /*     pattern definition     */ },
-    { /* another pattern definition */ },
-    { /*  more pattern if you want  */ },
-    // ...
+    { X:'string', Y:'int' },           // pattern #0
+    { X:'string', Z:'bool', Y:'int' }, // pattern #1
+    { Z:'bool', Y:'int', X:'string' }, // pattern #2
+    ...                                // more patterns
   ], result);
 
   return result;
 }
-foo('A', 'B', 'C');
+
+var r = foo('blah', 42);          // { X:'blah',   Y:42 }
+var r = foo('blahh', true, 7);    // { X:'blahh',  Y:7,  Z:true }
+var r = foo(false, 11, 'blaahh'); // { X:'blaahh', Y:11, Z:false }
 ```
 In the code above, `args` is the array of arguments.
 
 The 2nd parameter of `flexParams()` is an array of the *patterns*.  
-`flexParams()` tries to find **the suitable pattern at the first** in the array by comparing each pattern with `args`.  
-Once it is found, each item of `args` is stored into `result` <small>( the 3rd parameter )</small> as its properties.
+`flexParams()` tries to find **the most suitable pattern** in the array for `args` by comparing the type strings defined in each pattern with actual types of `args`.
+
+Once it is found, each value of `args` is stored into `result` <small>( the 3rd parameter )</small> as its properties.
 
 ### Defining a pattern of parameters
 Each pattern must be a plain object that has one of some specific formats.  
 The most basic format is like this:
 
 ```js
-//# Pattern Definition
+// Pattern Definition
 {
-  <1st-param>: '<type>',
-  <2nd-param>: '<type>',
+  param_1st: '<type>',
+  param_2nd: '<type>',
   ...
-  <nth-param>: '<type>'
+  param_nth: '<type>'
 }
 ```
 
-`'<type>'` is the name of the *datatype* kinda like `'boolean'`, `'string'`, or `'object'`, etc. for each param.  
-So you can write like this for instance:
+`'<type>'` is a string representation of *datatype* (ex. `'bool'`, `'string'`, `'array'`, `'object'`, etc. ) for each param, like this:
+
 ```js
 { foo:'string', bar:'boolean' }
 ```
@@ -88,25 +90,20 @@ This pattern means:
 - The 1st param is `foo`, and it must be a string
 - The 2nd param is `bar`, and it must be a boolean
 
-#### Setting default values
-Now let's say you want to set the default value of `bar`, the last parameter.  
-In the alternative format, instead of `'<type>'`, you can use an array such as:
-```js
-[ '<type>', <defaultValue> ]
-```
+#### Default Values
+Instead of just a type string, you can also use an **array** to define the default value:
 
-So if you want to assign `false` as the default value to `bar`,  
-it would look like this:
 ```js
 { foo:'string', bar:['boolean', false] }
 ```
 
-**Important:** Assigning any value other than `undefined` as the default value makes the parameter **optional**.  
+Now the 2nd param `bar` turned to **optional**. The default value is `false`.
+
 The pattern that contains optional parameters can be considered suitable even if **a fewer number of arguments** supplied. And the missing arguments will be filled with the default values of respective params.
 
 ### Let's see how it works
 ```js
-//# Example Code #1
+// Example Code #1
 function foo(...args) {
   let result = {};
 
@@ -120,8 +117,8 @@ function foo(...args) {
 }
 ```
 
-Now the example code has 3 actual patterns of parameters.  
-Test it by passing various combinations of arguments:
+You can see 3 patterns in the above example.  
+Let's test it by passing various combinations of arguments:
 ```js
 let test1 = foo();        // No argument
 let test2 = foo('ABC');   // A string
@@ -139,14 +136,14 @@ Test 2: { str: 'ABC', num: 1 }
 Test 3: { num: 8, flag: true }
 ```
 
-And you can see:
-- The test1 arguments matched with pattern #0
-- The test2 arguments matched with pattern #1
-- The test3 arguments matched with pattern #2
+Now you can see:
+- The test1 matched with pattern #0
+- The test2 matched with pattern #1
+- The test3 matched with pattern #2
 
-### Another Example
+### More Example
 ```js
-//# Example Code #2
+// Example Code #2
 const flexParams = require('flex-params');
 
 class User {
@@ -246,20 +243,31 @@ console.log( foo()             ); // 'The first pattern matched.'
 
 ### Error Handling
 
-If any of given patterns didn't match for the arguments, `flexParams()` returns `false`. But there are other options for handling such exceptions. `flexParams()` has **the 4th parameter: `fallback`** which accepts:
+If all the given patterns didn't match for the arguments, `flexParams()` returns `false`. But there is also another way to handle this situation. **The 4th parameter: `fallback`**.
+
+`fallback` can be:
 
 - a) **a callback**,  
--	b) **an `Error` object**, or  
--	c) **any other type of value** <small>( except for `undefined` )</small>.
+- b) **an object**, or  
+- c) **any other type of value** <small>( except for `undefined` )</small>.
 
-a) If you passed a callback, it is fired when all the given patterns mismatched.  
-Its parameter is `args` which is supplied with the same array as the 1st parameter of `flexParams()`.
+a) If you passed a callback, it is called when all the given patterns mismatched.  
+Tha callback receives **an object** as its parameter with these properties:
+- **args**: The original array of arguments
+- **patterns**: The array of all the patterns
+- **receiver**: The receiver object or function passed to the 3rd parameter
+- **error**: An Exception object ( `flexParams.InvalidArgument` )
 
-b) If you passed an `Error` object as the `fallback` , it is thrown when all the given patterns mismatched.
+b) You can pass an plain object as the `fallback` with these optional properties:
+- **log**: A string to be sent to `console.log()`
+- **warn**: A string to be sent to `console.warn()`
+- **error**: A string to be sent to `console.error()`
+- **throw**: Any type of value to be thrown as an exception
+  - If you set `true` , an Exception object is thrown ( `flexParams.InvalidArgument` )
 
 c) Any other type of value as the `fallback` , is returned straightly by `flexParams()` if all the given patterns mismatched.
 
-## Appendix: Extra types supported
+## Appendix: Extra Types
 
 flex-params supports some special types in addition to [JavaScript's builtin datatypes](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures).
 

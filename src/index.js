@@ -5,15 +5,7 @@
  * Released under the ISC License
  */
 
-function error(name) {
-	var r = new Error({
-		InvalidPatternFormat: "The parameters pattern should be an object",
-		InvalidParamFormat: "The parameter format should be a string, an array, or an object",
-		ParamTypeMissing: "You must specify the type of the parameter"
-	}[name]);
-	r.name = name;
-	return r;
-}
+import E from './exceptions';
 
 function isTypeOf(value, type) {
 	var actualType = typeof value;
@@ -48,25 +40,33 @@ function isTypeOf(value, type) {
 function normalizeParam(param) {
 	var r = {};
 	switch (typeof param) {
-	case 'string': // The type name
+	case 'string': // 'type'
 		r.type = param;
 		break;
-	case 'object': // A set of the type and the default value
-		if (Array.isArray(param)) {
-			if (!param[0]) throw error('ParamTypeMissing');
+	case 'object':
+		if (Array.isArray(param)) { // ['type', <default-value>]
+			if (!param[0]) {
+				console.warn(`[flex-params] Param Type Missing`);
+				return false;
+			};
 			r.type = param[0];
 			r.def = param[1];
-		} else {
-			r.type = param.type || param.t;
-			if (!r.type) throw error('ParamTypeMissing');
-			r.def = param.def || param.d || undefined;
+
+		} else { // { type: 'type', def: <default-value> }
+			if (!param.type) {
+				console.warn(`[flex-params] Param Type Missing`);
+				return false;
+			};
+			r.type = param.type;
+			r.def = param.def || param.default || undefined;
 		}
 		break;
 	case 'function': // A class(constructor) as the type
 		r.type = param;
 		break;
 	default:
-		throw error('InvalidParamFormat');
+		console.warn(`[flex-params] Invalid Param Format:`, param);
+		return false;
 	}
 	r._n = true; // Mark as normalized
 	return r;
@@ -92,7 +92,10 @@ function flexParams(args, patterns, receiver, fallback = undefined) {
 	mainLoop:
 	for (var i = 0; i < patterns.length; i++) {
 		var pat = patterns[i];
-		if (typeof pat != 'object') throw error('InvalidPatternFormat');
+		if (typeof pat != 'object') {
+			console.warn(`[flex-params] Invalid Pattern Format:`, pat);
+			continue;
+		}
 		var props = Object.keys(pat);
 
 		for (var j = 0; j < props.length; j++) {
@@ -100,6 +103,7 @@ function flexParams(args, patterns, receiver, fallback = undefined) {
 				// Check the rest of the params
 				for (; j < props.length; j++) {
 					var param = normalizeParam(pat[props[j]]);
+					if (!param) continue mainLoop; // Invalid param
 					pat[props[j]] = param;
 					// A non-optional param found. Go to the next pattern
 					if (isRequired(param)) continue mainLoop;
@@ -107,6 +111,7 @@ function flexParams(args, patterns, receiver, fallback = undefined) {
 				break;
 			}
 			var param = normalizeParam(pat[props[j]]);
+			if (!param) continue mainLoop; // Invalid param
 			pat[props[j]] = param;
 			// Type mismatch. Go to the next pattern
 			if (!isTypeOf(args[j], param.type)) continue mainLoop;
@@ -127,13 +132,33 @@ function flexParams(args, patterns, receiver, fallback = undefined) {
 		console.debug(':: MATCHED PATTERN:', `#${i+1}/${patterns.length}`, pat);
 		console.debug(':: RESULTING OBJ:', receiver);
 		//////// DEBUG */
-
 		return (isFunction ? receiver(r, i) : pat);
 	}
 	if (fallback === undefined) return false;
-	if (typeof fallback == 'function') return fallback(args);
-	if (fallback instanceof Error) throw fallback;
+
+	switch (typeof fallback) {
+	case 'function':
+		return fallback({
+			args,
+			patterns,
+			receiver,
+			error: new E.InvalidArgument({ args, patterns })
+		});
+	case 'object':
+		if (fallback.log) console.log(fallback.log);
+		if (fallback.warn) console.warn(fallback.warn);
+		if (fallback.error) console.error(fallback.error);
+		if (fallback.throw) {
+			throw (typeof fallback.throw == 'boolean')
+				? new E.InvalidArgument({ args, patterns })
+				: fallback.throw;
+
+		} else return false;
+	}
 	return fallback;
 }
+
+// Expose exceptions
+for (let i in E) flexParams[i] = E[i];
 
 export default flexParams;
