@@ -80,13 +80,36 @@ describe('Specs:', () => {
 });
 
 describe(`Examples:`, () => {
-	it(`Example #1`, example);
+	it(`Example #0`, example0);
+	it(`Example #1`, example1);
 	it(`Example #2`, example2);
 	it(`Example #3`, example3);
 	it(`Example #3-2`, example3_2);
 });
 
-function example() {
+function example0() {
+	function foo(...args) {
+		var result = {};
+
+		flexParams(args, [
+			{ X:'string', Y:'int' },           // pattern #0
+			{ X:'string', Z:'bool', Y:'int' }, // pattern #1
+			{ Z:'bool', Y:'int', X:'string' }  // pattern #2
+		], result);
+
+		return result;
+	}
+
+	var r1 = foo('blah', 42);          // { X:'blah',   Y:42 }
+	var r2 = foo('blahh', true, 7);    // { X:'blahh',  Y:7,  Z:true }
+	var r3 = foo(false, 11, 'blaahh'); // { X:'blaahh', Y:11, Z:false }
+
+	console.log('r1:', r1);
+	console.log('r2:', r2);
+	console.log('r3:', r3);
+}
+
+function example1() {
 	//# Example Code
 	function foo(...args) {
 		let result = {};
