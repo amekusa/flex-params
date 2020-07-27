@@ -1,3 +1,7 @@
+**ver.3.0.0**  The error handling API changed.
+
+---
+
 **flex-params** is a tiny, but powerful utility for writing a function that has flexible parameters.
 
 As you know, JavaScript doesn't support **function overloading** like this:
