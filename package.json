@@ -1,6 +1,6 @@
 {
   "name": "flex-params",
-  "version": "2.3.1",
+  "version": "3.0.0",
   "description": "Smartly implement flexible function parameters",
   "main": "bundle.js",
   "files": [
