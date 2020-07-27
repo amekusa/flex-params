@@ -7,7 +7,7 @@
 
 const // Modules
 	assert = require('assert'),
-	flexParams = require('./index.js');
+	flexParams = require('./bundle.js');
 
 describe('Specs:', () => {
 	let patterns = [
