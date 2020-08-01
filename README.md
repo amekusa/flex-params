@@ -1,4 +1,5 @@
-**ver.3.0.0**  The error handling API changed.
+- **ver.3.0.1** [Fix] Broken ES module loading since 3.0.0 has been fixed.
+- **ver.3.0.0** The error handling API changed.
 
 ---
 
