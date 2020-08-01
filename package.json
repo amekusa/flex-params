@@ -18,6 +18,7 @@
     "prepublish": "npm run test && npm run build"
   },
   "watch": {
+    "test": ["test.js", "bundle.js"],
     "build": "src/*.js"
   },
   "author": "amekusa (https://amekusa.com)",
