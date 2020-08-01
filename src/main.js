@@ -68,7 +68,7 @@ function normalizeParam(param) {
 		console.warn(`[flex-params] Invalid Param Format:`, param);
 		return false;
 	}
-	r._n = true; // Mark as normalized
+	// r._n = true; // Mark as normalized // XXX: NOT USED
 	return r;
 }
 
