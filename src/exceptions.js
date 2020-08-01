@@ -1,36 +1,16 @@
-class Exception extends Error {
-	constructor(msg, info = {}) {
-		super(msg);
-		this._info = info;
+export class Exception extends Error {
+	constructor(msg, info = null) {
+		super(msg + (info ? '\n> info: '+JSON.stringify(info, null, 2) : ''));
 		this.name = this.constructor.name;
+		this._info = info;
 	}
 	get info() {
 		return this._info;
 	}
 }
 
-const E = {
-	Exception,
-	InvalidArgument: class extends Exception {
-		constructor(info = {}) {
-			super(`The passed argument doesn't match for the expected pattern(s)`, info);
-		}
-	},
-	InvalidPatternFormat: class extends Exception {
-		constructor(info = {}) {
-			super(`The parameter pattern should be an object`, info);
-		}
-	},
-	InvalidParamFormat: class extends Exception {
-		constructor(info = {}) {
-			super(`The parameter format should be a string, an array, or an object`, info);
-		}
-	},
-	ParamTypeMissing: class extends Exception {
-		constructor(info = {}) {
-			super(`You must specify the type of the parameter`, info);
-		}
+export class InvalidArgument extends Exception {
+	constructor(info) {
+		super(`The passed argument doesn't match for the expected pattern(s)`, info);
 	}
-};
-
-export default E;
+}
