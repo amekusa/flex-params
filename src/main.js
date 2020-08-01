@@ -5,7 +5,7 @@
  * Released under the ISC License
  */
 
-import E from './exceptions.js';
+import { Exception, InvalidArgument } from './exceptions.js';
 
 function isTypeOf(value, type) {
 	var actualType = typeof value;
@@ -68,7 +68,7 @@ function normalizeParam(param) {
 		console.warn(`[flex-params] Invalid Param Format:`, param);
 		return false;
 	}
-	r._n = true; // Mark as normalized
+	// r._n = true; // Mark as normalized // XXX: NOT USED
 	return r;
 }
 
@@ -142,16 +142,16 @@ function flexParams(args, patterns, receiver, fallback = undefined) {
 			args,
 			patterns,
 			receiver,
-			error: new E.InvalidArgument({ args, patterns })
+			error: new InvalidArgument({ arguments: args, expectedPatterns: patterns })
 		});
 	case 'object':
 		if (fallback.log) console.log(fallback.log);
 		if (fallback.warn) console.warn(fallback.warn);
 		if (fallback.error) console.error(fallback.error);
 		if (fallback.throw) {
-			throw (typeof fallback.throw == 'boolean')
-				? new E.InvalidArgument({ args, patterns })
-				: fallback.throw;
+			throw (typeof fallback.throw == 'boolean') ?
+				new InvalidArgument({ arguments: args, expectedPatterns: patterns }) :
+				fallback.throw;
 
 		} else return false;
 	}
@@ -159,6 +159,7 @@ function flexParams(args, patterns, receiver, fallback = undefined) {
 }
 
 // Expose exceptions
-for (let i in E) flexParams[i] = E[i];
+flexParams.Exception = Exception;
+flexParams.InvalidArgument = InvalidArgument;
 
 export default flexParams;

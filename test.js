@@ -56,8 +56,8 @@ describe('Specs:', () => {
 				assert.deepEqual(arg.patterns, patterns);
 				assert.strictEqual(arg.receiver, receiver);
 				assert.ok(arg.error instanceof flexParams.InvalidArgument);
-				assert.deepEqual(arg.error.info.args, ['x', 'y', 'z']);
-				assert.deepEqual(arg.error.info.patterns, patterns);
+				assert.deepEqual(arg.error.info.arguments, ['x', 'y', 'z']);
+				assert.deepEqual(arg.error.info.expectedPatterns, patterns);
 				return 'R';
 			});
 			assert.equal(r, 'R');

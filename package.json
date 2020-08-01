@@ -7,17 +7,18 @@
     "src"
   ],
   "exports": {
-    "import": "./src/index.js",
+    "import": "./src/main.js",
     "require": "./bundle.js"
   },
   "scripts": {
     "devtools": "npm i --no-save rollup mocha npm-watch",
     "watch": "npm-watch",
     "test": "mocha",
-    "build": "rollup src/index.js --file bundle.js --format umd --name flex-params",
+    "build": "rollup src/main.js --file bundle.js --format umd --name flex-params",
     "prepublish": "npm run test && npm run build"
   },
   "watch": {
+    "test": ["test.js", "bundle.js"],
     "build": "src/*.js"
   },
   "author": "amekusa (https://amekusa.com)",
