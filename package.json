@@ -1,6 +1,6 @@
 {
   "name": "flex-params",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Smartly implement flexible function parameters",
   "main": "bundle.js",
   "files": [
@@ -18,7 +18,10 @@
     "prepublish": "npm run test && npm run build"
   },
   "watch": {
-    "test": ["test.js", "bundle.js"],
+    "test": [
+      "test.js",
+      "bundle.js"
+    ],
     "build": "src/*.js"
   },
   "author": "amekusa (https://amekusa.com)",
