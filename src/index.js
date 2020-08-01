@@ -5,7 +5,7 @@
  * Released under the ISC License
  */
 
-import E from './exceptions';
+import E from './exceptions.js';
 
 function isTypeOf(value, type) {
 	var actualType = typeof value;
