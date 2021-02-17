@@ -18,11 +18,18 @@
     "prepublish": "npm run test && npm run build"
   },
   "watch": {
-    "test": [
-      "test.js",
-      "bundle.js"
-    ],
-    "build": "src/*.js"
+    "build": {
+      "patterns": "src",
+      "extensions": "js",
+      "inherit": true
+    },
+    "test": {
+      "patterns": [
+        "test.js",
+        "bundle.js"
+      ],
+      "inherit": true
+    }
   },
   "author": "amekusa (https://amekusa.com)",
   "license": "ISC",
