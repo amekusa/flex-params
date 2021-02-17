@@ -7,23 +7,25 @@
 
 import { Exception, InvalidArgument } from './exceptions.js';
 
-function isTypeOf(value, type) {
-	var actualType = typeof value;
-	if (actualType == 'object') {
-		if (Array.isArray(value)) return type == 'array';
-		if (type == 'object') return true;
-		return (typeof type == 'function' && value instanceof type);
-	}
-	if (actualType == type) return true;
+function isTypeOf(value, expected) {
+	if (typeof expected == 'function') return value instanceof expected;
 
-	switch (actualType) {
+	if (expected == 'iterable') {
+		if (value === null) return false;
+		if (value === undefined) return false;
+		return typeof value[Symbol.iterator] == 'function';
+	}
+	let actual = typeof value;
+	if (actual === expected) return true;
+
+	switch (actual) {
 	case 'boolean':
-		return (type == 'bool');
+		return expected == 'bool';
 	case 'number':
-		switch (type) {
+		switch (expected) {
 		case 'int':
 		case 'integer':
-			return (isFinite(value) && Math.floor(value) === value);
+			return isFinite(value) && Math.floor(value) === value;
 		case 'float':
 		case 'double':
 			return true;
