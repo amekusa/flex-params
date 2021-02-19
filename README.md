@@ -1,9 +1,14 @@
-- **ver.3.0.1** [Fix] Broken ES module loading since 3.0.0 has been fixed.
-- **ver.3.0.0** The error handling API changed.
+- **v3.1.0**
+	- Support simpler syntax
+	- Support pipe separated multiple types
+- **v3.0.1** [Fix] Broken ES module loading since 3.0.0 has been fixed.
+- **v3.0.0** The error handling API changed.
 
 ---
 
-**flex-params** is a tiny, but powerful utility for writing a function that has flexible parameters.
+[![Build Status](https://travis-ci.com/amekusa/flex-params.svg?branch=master)](https://travis-ci.com/amekusa/flex-params) [![codecov](https://codecov.io/gh/amekusa/flex-params/branch/master/graph/badge.svg)](https://codecov.io/gh/amekusa/flex-params) [![npm](https://img.shields.io/badge/dynamic/json?label=npm%0Apackage&query=%24%5B%27dist-tags%27%5D%5B%27latest%27%5D&url=https%3A%2F%2Fregistry.npmjs.org%2Fflex-params%2F)](https://www.npmjs.com/package/flex-params)
+
+**flex-params** is a tiny, but powerful utility for writing a function that has **multiple signatures**.
 
 As you know, JavaScript doesn't support **function overloading** like this:
 ```js
@@ -43,7 +48,7 @@ import flexParams from 'flex-params';
 
 ## Usage
 
-In your function, pass an array of the arguments to `flexParams()` with any number of **patterns of parameters** <small>( explained later )</small> you desired.
+In your function, pass an array of the arguments to `flexParams()` with any number of **patterns of parameters (a.k.a. "signatures")** you desired.
 
 ```js
 // Example Code
@@ -71,6 +76,14 @@ The 2nd parameter of `flexParams()` is an array of the *patterns*.
 
 Once it is found, each value of `args` is stored into `result` <small>( the 3rd parameter )</small> as its properties.
 
+If you prefer simpler syntax, you can also write like this:
+
+```js
+var result = flexParams(args, [
+  ... // patterns
+]);
+```
+
 ### Defining a pattern of parameters
 Each pattern must be a plain object that has one of some specific formats.  
 The most basic format is like this:
@@ -95,6 +108,14 @@ This pattern means:
 - The 1st param is `foo`, and it must be a string
 - The 2nd param is `bar`, and it must be a boolean
 
+You can also write **multiple types** separated by `|` (pipe) likes this:
+
+```js
+{ foo:'string|number|boolean' }
+```
+
+This parameter matches with a string, a number or a boolean.
+
 #### Default Values
 Instead of just a type string, you can also use an **array** to define the default value:
 
@@ -106,7 +127,7 @@ Now the 2nd param `bar` turned to **optional**. The default value is `false`.
 
 The pattern that contains optional parameters can be considered suitable even if **a fewer number of arguments** supplied. And the missing arguments will be filled with the default values of respective params.
 
-### Let's see how it works
+### How does it work?
 ```js
 // Example Code #1
 function foo(...args) {
@@ -193,8 +214,8 @@ User { login: 'd4rk10rd', pass: Password { key: 'asdf' } }
 As you can see this example, you can pass `this` to the 3rd parameter of `flexParams()`. This way is useful for **initializing the instance** in the class constructor.
 
 ### Advanced Usage
+
 About the 3rd parameter of `flexParams()`, it accepts not only an object but also a **function**.  
-Look at this code:
 
 ```js
 function foo(...args) {
@@ -276,7 +297,7 @@ c) Any other type of value as the `fallback` , is returned straightly by `flexPa
 
 flex-params supports some special types in addition to [JavaScript's builtin datatypes](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures).
 
-| type | description |
+| Type | Description |
 |-----:|:------------|
 | `bool` | Alias of `boolean` |
 | `int` `integer` | Matches for integers |
