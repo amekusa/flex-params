@@ -1,7 +1,7 @@
 {
   "name": "flex-params",
   "version": "3.0.1",
-  "description": "Smartly implement flexible function parameters",
+  "description": "Multiple signatures for a function",
   "main": "bundle.js",
   "files": [
     "src"
@@ -41,8 +41,8 @@
     "utility",
     "function",
     "parameters",
-    "params",
     "arguments",
-    "args"
+    "signatures",
+    "overload"
   ]
 }
