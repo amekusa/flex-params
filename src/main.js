@@ -9,7 +9,13 @@ import { Exception, InvalidArgument } from './exceptions.js';
 
 function isTypeOf(value, expected) {
 	if (typeof expected == 'function') return value instanceof expected;
+	for (let type of expected.split('|')) {
+		if (_isTypeOf(value, type)) return true;
+	}
+	return false;
+}
 
+function _isTypeOf(value, expected) {
 	if (expected == 'iterable') {
 		if (value === null) return false;
 		if (value === undefined) return false;
