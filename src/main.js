@@ -85,7 +85,7 @@ function normalizeParam(param) {
  * @return {boolean} Whether the param is required or not
  */
 function isRequired(param) {
-	return (param.def === undefined);
+	return param.def === undefined;
 }
 
 /**
@@ -110,7 +110,6 @@ function flexParams(args, patterns, receiver = undefined, fallback = undefined) 
 			continue;
 		}
 		var props = Object.keys(pat);
-
 		for (var j = 0; j < props.length; j++) {
 			if ((args.length-1) < j) { // Fewer arguments
 				// Check the rest of the params
