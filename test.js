@@ -15,6 +15,12 @@ describe('Specs:', () => {
 		{ str:'string', num:['number', 1], name:['string', 'bravo'] },
 		{ num:'number', flag:'boolean', name:['string', 'charlie'] }
 	];
+	describe(`If the receiver is falsy`, () => {
+		it(`returns the args packed in a plain object`, () => {
+			let r = flexParams(['abc', 8], patterns, false);
+			assert.deepEqual(r, {str:'abc', num:8, name:'bravo'});
+		});
+	});
 	describe(`If the receiver is an object,`, () => {
 		it(`stores all the args into the object`, () => {
 			let r = {};
@@ -75,6 +81,13 @@ describe('Specs:', () => {
 		it(`returns the fallback if it's not undefined, a function, nor an object`, () => {
 			let r = flexParams(['x', 'y', 'z'], patterns, {}, 'FALLBACK');
 			assert.equal(r, 'FALLBACK');
+		});
+	});
+	describe(`Type Matching`, () => {
+		it(`Multiple Types`, () => {
+			let pattern = { numOrBool:'number', primitive:'bool' };
+			var r = flexParams([1, true], [pattern]);
+			assert.deepEqual(r, { numOrBool:1, primitive:true });
 		});
 	});
 });

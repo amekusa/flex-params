@@ -1,7 +1,7 @@
 {
   "name": "flex-params",
   "version": "3.0.1",
-  "description": "Smartly implement flexible function parameters",
+  "description": "Multiple signatures for a function",
   "main": "bundle.js",
   "files": [
     "src"
@@ -11,18 +11,46 @@
     "require": "./bundle.js"
   },
   "scripts": {
-    "devtools": "npm i --no-save rollup mocha npm-watch",
+    "prepublishOnly": "npm run clean && npm run build && npm run test",
+    "setup": "node setup.js",
     "watch": "npm-watch",
-    "test": "mocha",
+    "clean": "find . -name '.DS_Store' -not -path '*/node_modules/*' | xargs rm -r",
     "build": "rollup src/main.js --file bundle.js --format umd --name flex-params",
-    "prepublish": "npm run test && npm run build"
+    "test": "nyc mocha",
+    "codecov": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
+  },
+  "_setup": {
+    "deps": {
+      "nyc": {
+        "version": "^15.1.0"
+      },
+      "npm-watch": {
+        "version": "^0.7.0"
+      },
+      "codecov": {
+        "version": "^3.8.1"
+      },
+      "rollup": {
+        "version": "^2.34.0"
+      },
+      "mocha": {
+        "version": "^8.2.1"
+      }
+    }
   },
   "watch": {
-    "test": [
-      "test.js",
-      "bundle.js"
-    ],
-    "build": "src/*.js"
+    "build": {
+      "patterns": "src",
+      "extensions": "js",
+      "inherit": true
+    },
+    "test": {
+      "patterns": [
+        "test.js",
+        "bundle.js"
+      ],
+      "inherit": true
+    }
   },
   "author": "amekusa (https://amekusa.com)",
   "license": "ISC",
@@ -34,8 +62,8 @@
     "utility",
     "function",
     "parameters",
-    "params",
     "arguments",
-    "args"
+    "signatures",
+    "overload"
   ]
 }

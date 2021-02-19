@@ -7,23 +7,31 @@
 
 import { Exception, InvalidArgument } from './exceptions.js';
 
-function isTypeOf(value, type) {
-	var actualType = typeof value;
-	if (actualType == 'object') {
-		if (Array.isArray(value)) return type == 'array';
-		if (type == 'object') return true;
-		return (typeof type == 'function' && value instanceof type);
+function isTypeOf(value, expected) {
+	if (typeof expected == 'function') return value instanceof expected;
+	for (let type of expected.split('|')) {
+		if (_isTypeOf(value, type)) return true;
 	}
-	if (actualType == type) return true;
+	return false;
+}
 
-	switch (actualType) {
+function _isTypeOf(value, expected) {
+	if (expected == 'iterable') {
+		if (value === null) return false;
+		if (value === undefined) return false;
+		return typeof value[Symbol.iterator] == 'function';
+	}
+	let actual = typeof value;
+	if (actual === expected) return true;
+
+	switch (actual) {
 	case 'boolean':
-		return (type == 'bool');
+		return expected == 'bool';
 	case 'number':
-		switch (type) {
+		switch (expected) {
 		case 'int':
 		case 'integer':
-			return (isFinite(value) && Math.floor(value) === value);
+			return isFinite(value) && Math.floor(value) === value;
 		case 'float':
 		case 'double':
 			return true;
@@ -77,18 +85,23 @@ function normalizeParam(param) {
  * @return {boolean} Whether the param is required or not
  */
 function isRequired(param) {
-	return (param.def === undefined);
+	return param.def === undefined;
 }
 
 /**
  * Parses args according to the specified patterns
  * @param           {array} args
  * @param           {array} patterns
- * @param {object|function} receiver
- * @param             {any} fallback=undefined
+ * @param {object|function} [receiver]
+ * @param             {any} [fallback]
  * @return {object|boolean} Matched pattern, or False if no matched pattern
  */
-function flexParams(args, patterns, receiver, fallback = undefined) {
+function flexParams(args, patterns, receiver = undefined, fallback = undefined) {
+	// 0: Returns the args packed in a plain object
+	// 1: Assigns the args to the object. Returns the matched signature
+	// 2: Passes the args to the receiver. Returns the callback's result
+	var mode = !receiver ? 0 : ((typeof receiver == 'function' && receiver.length) ? 2 : 1);
+
 	mainLoop:
 	for (var i = 0; i < patterns.length; i++) {
 		var pat = patterns[i];
@@ -97,7 +110,6 @@ function flexParams(args, patterns, receiver, fallback = undefined) {
 			continue;
 		}
 		var props = Object.keys(pat);
-
 		for (var j = 0; j < props.length; j++) {
 			if ((args.length-1) < j) { // Fewer arguments
 				// Check the rest of the params
@@ -116,8 +128,7 @@ function flexParams(args, patterns, receiver, fallback = undefined) {
 			// Type mismatch. Go to the next pattern
 			if (!isTypeOf(args[j], param.type)) continue mainLoop;
 		}
-		var isFunction = typeof receiver == 'function';
-		var r = isFunction ? {} : receiver;
+		var r = mode == 1 ? receiver : {};
 		for (var j = 0; j < props.length; j++) {
 			var prop = props[j];
 			var param = pat[prop];
@@ -132,7 +143,9 @@ function flexParams(args, patterns, receiver, fallback = undefined) {
 		console.debug(':: MATCHED PATTERN:', `#${i+1}/${patterns.length}`, pat);
 		console.debug(':: RESULTING OBJ:', receiver);
 		//////// DEBUG */
-		return (isFunction ? receiver(r, i) : pat);
+		if (mode == 0) return r;
+		if (mode == 1) return pat;
+		return receiver(r, i);
 	}
 	if (fallback === undefined) return false;
 
