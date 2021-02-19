@@ -6,7 +6,7 @@
 
 ---
 
-[![Build Status](https://travis-ci.com/amekusa/flex-params.svg?branch=master)](https://travis-ci.com/amekusa/flex-params) [![codecov](https://codecov.io/gh/amekusa/flex-params/branch/master/graph/badge.svg)](https://codecov.io/gh/amekusa/flex-params) [![npm](https://img.shields.io/badge/dynamic/json?label=npm%0Apackage&query=%24%5B%27dist-tags%27%5D%5B%27latest%27%5D&url=https%3A%2F%2Fregistry.npmjs.org%2Fflex-params%2F)](https://www.npmjs.com/package/flex-params)
+[![Build Status](https://travis-ci.com/amekusa/flex-params.svg?branch=master)](https://travis-ci.com/amekusa/flex-params) [![npm](https://img.shields.io/badge/dynamic/json?label=npm%0Apackage&query=%24%5B%27dist-tags%27%5D%5B%27latest%27%5D&url=https%3A%2F%2Fregistry.npmjs.org%2Fflex-params%2F)](https://www.npmjs.com/package/flex-params)
 
 **flex-params** is a tiny, but powerful utility for writing a function that has **multiple signatures**.
 
