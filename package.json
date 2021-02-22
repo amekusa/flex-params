@@ -15,7 +15,7 @@
     "setup": "node setup.js",
     "watch": "npm-watch",
     "clean": "find . -name '.DS_Store' -not -path '*/node_modules/*' | xargs rm -r",
-    "build": "rollup src/main.js --file bundle.js --format umd --name flex-params",
+    "build": "rollup src/main.js --file bundle.js --format umd --name flex-params --sourcemap",
     "test": "nyc mocha",
     "codecov": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
   },

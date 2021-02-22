@@ -84,10 +84,25 @@ describe('Specs:', () => {
 		});
 	});
 	describe(`Type Matching`, () => {
+		it(`Primitive`, () => {
+			let r;
+			let pattern = { prim:'primitive' };
+			for (let value of [0, 1, 'abc', true, false, undefined, null]) {
+				r = flexParams([value], [pattern]);
+				assert.deepEqual(r, { prim: value });
+			}
+			for (let value of [{}, [], () => {}]) {
+				r = flexParams([value], [pattern]);
+				assert.equal(r, false);
+			}
+		});
 		it(`Multiple Types`, () => {
-			let pattern = { numOrBool:'number', primitive:'bool' };
-			var r = flexParams([1, true], [pattern]);
-			assert.deepEqual(r, { numOrBool:1, primitive:true });
+			let r;
+			let pattern = { numOrBool:'number|bool', strOrObject:'string|object' };
+			r = flexParams([1, 'foo'], [pattern]);
+			assert.deepEqual(r, { numOrBool:1, strOrObject:'foo' });
+			r = flexParams([false, { x: 1 }], [pattern]);
+			assert.deepEqual(r, { numOrBool:false, strOrObject:{ x: 1 } });
 		});
 	});
 });
