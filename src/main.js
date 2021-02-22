@@ -16,13 +16,18 @@ function isTypeOf(value, expected) {
 }
 
 function _isTypeOf(value, expected) {
-	if (expected == 'iterable') {
+	switch (expected) {
+	case 'iterable':
 		if (value === null) return false;
 		if (value === undefined) return false;
 		return typeof value[Symbol.iterator] == 'function';
+	case 'any':
+	case 'mixed':
+		return true;
 	}
 	let actual = typeof value;
-	if (actual === expected) return true;
+	if (expected == 'primitive') return !value || (actual != 'object' && actual != 'function');
+	else if (actual === expected) return true;
 
 	switch (actual) {
 	case 'boolean':
