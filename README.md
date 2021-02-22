@@ -300,9 +300,12 @@ flex-params supports some special types in addition to [JavaScript's builtin dat
 | Type | Description |
 |-----:|:------------|
 | `bool` | Alias of `boolean` |
-| `int` `integer` | Matches for integers |
-| `float` `double` | Matches for `number`s except for integers |
-| `array` | Matches for arrays |
+| `int`, `integer` | Matches for an integer |
+| `float`, `double` | Alias of `number` |
+| `array` | Matches for an array |
+| `iterable` | Matches for an array or an array-like object |
+| `primitive` | Matches for a primitive type value |
+| `any`, `mixed` | Matches for any type of value |
 | A class constructor | Matches for the class instances |
 
 ---
