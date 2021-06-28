@@ -17,6 +17,8 @@ function isTypeOf(value, expected) {
 
 function _isTypeOf(value, expected) {
 	switch (expected) {
+	case 'array':
+		return Array.isArray(value);
 	case 'iterable':
 		if (value === null) return false;
 		if (value === undefined) return false;
