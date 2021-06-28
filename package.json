@@ -1,6 +1,6 @@
 {
   "name": "flex-params",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "description": "Multiple signatures for a function",
   "main": "bundle.js",
   "files": [
