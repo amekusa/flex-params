@@ -84,7 +84,7 @@ describe('Specs:', () => {
 		});
 	});
 	describe(`Type Matching`, () => {
-		it(`Primitive`, () => {
+		it(`primitive`, () => {
 			let r;
 			let pattern = { prim:'primitive' };
 			for (let value of [0, 1, 'abc', true, false, undefined, null]) {
@@ -95,6 +95,34 @@ describe('Specs:', () => {
 				r = flexParams([value], [pattern]);
 				assert.equal(r, false);
 			}
+		});
+		it(`array`, () => {
+			let r;
+			let pattern = { arr:'array' };
+			r = flexParams([[1, 2, 3]], [pattern]);
+			assert.deepEqual(r, { arr:[1, 2, 3] });
+		});
+		it(`iterable`, () => {
+			let r;
+			let pattern = { itr:'iterable' };
+
+			// array
+			r = flexParams([[1, 2, 3]], [pattern]);
+			assert.deepEqual(r, { itr:[1, 2, 3] });
+
+			// string
+			r = flexParams(['abc'], [pattern]);
+			assert.deepEqual(r, { itr:'abc' });
+
+			// custom iterable
+			let myIterable = {};
+			myIterable[Symbol.iterator] = function* () {
+				yield 1;
+				yield 2;
+				yield 3;
+			};
+			r = flexParams([myIterable], [pattern]);
+			assert.deepEqual(r, { itr:myIterable });
 		});
 		it(`Multiple Types`, () => {
 			let r;
